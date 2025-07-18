@@ -1,0 +1,106 @@
+{
+  "entityType" : "RULE_CHAIN",
+  "entity" : {
+    "additionalInfo" : {
+      "description" : ""
+    },
+    "configuration" : null,
+    "debugMode" : true,
+    "externalId" : null,
+    "firstRuleNodeId" : {
+      "entityType" : "RULE_NODE",
+      "id" : "570e7970-20f8-11f0-a2be-d7621253a08f"
+    },
+    "id" : {
+      "entityType" : "RULE_CHAIN",
+      "id" : "244fb5e0-20f7-11f0-a2be-d7621253a08f"
+    },
+    "name" : "Device Status Alert",
+    "root" : false,
+    "type" : "CORE"
+  },
+  "metaData" : {
+    "connections" : [ {
+      "fromIndex" : 0,
+      "toIndex" : 1,
+      "type" : "Disconnect Event"
+    }, {
+      "fromIndex" : 0,
+      "toIndex" : 2,
+      "type" : "Connect Event"
+    } ],
+    "firstNodeIndex" : 0,
+    "nodes" : [ {
+      "additionalInfo" : {
+        "description" : "",
+        "layoutX" : 252,
+        "layoutY" : 250
+      },
+      "configuration" : {
+        "version" : 0
+      },
+      "configurationVersion" : 0,
+      "createdTime" : 0,
+      "debugMode" : true,
+      "externalId" : null,
+      "id" : {
+        "entityType" : "RULE_NODE",
+        "id" : "570e7970-20f8-11f0-a2be-d7621253a08f"
+      },
+      "name" : "Message Type",
+      "queueName" : null,
+      "ruleChainId" : null,
+      "singletonMode" : false,
+      "type" : "org.thingsboard.rule.engine.filter.TbMsgTypeSwitchNode"
+    }, {
+      "additionalInfo" : {
+        "description" : "",
+        "layoutX" : 489,
+        "layoutY" : 340
+      },
+      "configuration" : {
+        "event" : "DISCONNECT_EVENT"
+      },
+      "configurationVersion" : 0,
+      "createdTime" : 0,
+      "debugMode" : true,
+      "externalId" : null,
+      "id" : {
+        "entityType" : "RULE_NODE",
+        "id" : "570f15b0-20f8-11f0-a2be-d7621253a08f"
+      },
+      "name" : "Device Presense",
+      "queueName" : null,
+      "ruleChainId" : null,
+      "singletonMode" : false,
+      "type" : "org.thingsboard.rule.engine.action.TbDeviceStateNode"
+    }, {
+      "additionalInfo" : {
+        "description" : "",
+        "layoutX" : 532,
+        "layoutY" : 178
+      },
+      "configuration" : {
+        "event" : "CONNECT_EVENT"
+      },
+      "configurationVersion" : 0,
+      "createdTime" : 0,
+      "debugMode" : true,
+      "externalId" : null,
+      "id" : {
+        "entityType" : "RULE_NODE",
+        "id" : "86835ea0-20f8-11f0-a2be-d7621253a08f"
+      },
+      "name" : "Device Presence 2",
+      "queueName" : null,
+      "ruleChainId" : null,
+      "singletonMode" : false,
+      "type" : "org.thingsboard.rule.engine.action.TbDeviceStateNode"
+    } ],
+    "ruleChainConnections" : null
+  },
+  "relations" : [ ],
+  "attributes" : {
+    "SERVER_SCOPE" : [ ]
+  }
+}

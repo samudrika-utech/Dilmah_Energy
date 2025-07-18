@@ -1,0 +1,491 @@
+{
+  "entityType" : "RULE_CHAIN",
+  "entity" : {
+    "additionalInfo" : {
+      "description" : ""
+    },
+    "configuration" : null,
+    "debugMode" : false,
+    "externalId" : null,
+    "firstRuleNodeId" : {
+      "entityType" : "RULE_NODE",
+      "id" : "8d4348e0-136f-11f0-a2be-d7621253a08f"
+    },
+    "id" : {
+      "entityType" : "RULE_CHAIN",
+      "id" : "8d34c9f0-136f-11f0-a2be-d7621253a08f"
+    },
+    "name" : "Root Rule Chain msg",
+    "root" : false,
+    "type" : "CORE"
+  },
+  "metaData" : {
+    "connections" : [ {
+      "fromIndex" : 2,
+      "toIndex" : 0,
+      "type" : "Post telemetry"
+    }, {
+      "fromIndex" : 2,
+      "toIndex" : 1,
+      "type" : "Post attributes"
+    }, {
+      "fromIndex" : 2,
+      "toIndex" : 3,
+      "type" : "RPC Request from Device"
+    }, {
+      "fromIndex" : 2,
+      "toIndex" : 4,
+      "type" : "Other"
+    }, {
+      "fromIndex" : 2,
+      "toIndex" : 5,
+      "type" : "RPC Request to Device"
+    }, {
+      "fromIndex" : 2,
+      "toIndex" : 7,
+      "type" : "RPC Request to Device"
+    }, {
+      "fromIndex" : 2,
+      "toIndex" : 13,
+      "type" : "Post telemetry"
+    }, {
+      "fromIndex" : 6,
+      "toIndex" : 2,
+      "type" : "Success"
+    }, {
+      "fromIndex" : 7,
+      "toIndex" : 8,
+      "type" : "Failure"
+    }, {
+      "fromIndex" : 7,
+      "toIndex" : 8,
+      "type" : "False"
+    }, {
+      "fromIndex" : 7,
+      "toIndex" : 8,
+      "type" : "True"
+    }, {
+      "fromIndex" : 13,
+      "toIndex" : 14,
+      "type" : "Success"
+    }, {
+      "fromIndex" : 14,
+      "toIndex" : 15,
+      "type" : "True"
+    }, {
+      "fromIndex" : 15,
+      "toIndex" : 12,
+      "type" : "Success"
+    } ],
+    "firstNodeIndex" : 6,
+    "nodes" : [ {
+      "additionalInfo" : {
+        "description" : null,
+        "layoutX" : 824,
+        "layoutY" : 156
+      },
+      "configuration" : {
+        "defaultTTL" : 0
+      },
+      "configurationVersion" : 0,
+      "createdTime" : 0,
+      "debugMode" : true,
+      "externalId" : null,
+      "id" : {
+        "entityType" : "RULE_NODE",
+        "id" : "8d40d7e0-136f-11f0-a2be-d7621253a08f"
+      },
+      "name" : "Save Timeseries",
+      "queueName" : null,
+      "ruleChainId" : null,
+      "singletonMode" : false,
+      "type" : "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode"
+    }, {
+      "additionalInfo" : {
+        "layoutX" : 825,
+        "layoutY" : 52
+      },
+      "configuration" : {
+        "scope" : "CLIENT_SCOPE",
+        "notifyDevice" : false,
+        "updateAttributesOnlyOnValueChange" : false,
+        "sendAttributesUpdatedNotification" : false
+      },
+      "configurationVersion" : 2,
+      "createdTime" : 0,
+      "debugMode" : false,
+      "externalId" : null,
+      "id" : {
+        "entityType" : "RULE_NODE",
+        "id" : "8d41c240-136f-11f0-a2be-d7621253a08f"
+      },
+      "name" : "Save Client Attributes",
+      "queueName" : null,
+      "ruleChainId" : null,
+      "singletonMode" : false,
+      "type" : "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode"
+    }, {
+      "additionalInfo" : {
+        "description" : null,
+        "layoutX" : 347,
+        "layoutY" : 149
+      },
+      "configuration" : {
+        "version" : 0
+      },
+      "configurationVersion" : 0,
+      "createdTime" : 0,
+      "debugMode" : false,
+      "externalId" : null,
+      "id" : {
+        "entityType" : "RULE_NODE",
+        "id" : "8d421060-136f-11f0-a2be-d7621253a08f"
+      },
+      "name" : "Message Type Switch",
+      "queueName" : null,
+      "ruleChainId" : null,
+      "singletonMode" : false,
+      "type" : "org.thingsboard.rule.engine.filter.TbMsgTypeSwitchNode"
+    }, {
+      "additionalInfo" : {
+        "layoutX" : 825,
+        "layoutY" : 266
+      },
+      "configuration" : {
+        "scriptLang" : "TBEL",
+        "jsScript" : "return '\\nIncoming message:\\n' + JSON.stringify(msg) + '\\nIncoming metadata:\\n' + JSON.stringify(metadata);",
+        "tbelScript" : "return '\\nIncoming message:\\n' + JSON.stringify(msg) + '\\nIncoming metadata:\\n' + JSON.stringify(metadata);"
+      },
+      "configurationVersion" : 0,
+      "createdTime" : 0,
+      "debugMode" : false,
+      "externalId" : null,
+      "id" : {
+        "entityType" : "RULE_NODE",
+        "id" : "8d425e80-136f-11f0-a2be-d7621253a08f"
+      },
+      "name" : "Log RPC from Device",
+      "queueName" : null,
+      "ruleChainId" : null,
+      "singletonMode" : false,
+      "type" : "org.thingsboard.rule.engine.action.TbLogNode"
+    }, {
+      "additionalInfo" : {
+        "layoutX" : 825,
+        "layoutY" : 379
+      },
+      "configuration" : {
+        "scriptLang" : "TBEL",
+        "jsScript" : "return '\\nIncoming message:\\n' + JSON.stringify(msg) + '\\nIncoming metadata:\\n' + JSON.stringify(metadata);",
+        "tbelScript" : "return '\\nIncoming message:\\n' + JSON.stringify(msg) + '\\nIncoming metadata:\\n' + JSON.stringify(metadata);"
+      },
+      "configurationVersion" : 0,
+      "createdTime" : 0,
+      "debugMode" : false,
+      "externalId" : null,
+      "id" : {
+        "entityType" : "RULE_NODE",
+        "id" : "8d428590-136f-11f0-a2be-d7621253a08f"
+      },
+      "name" : "Log Other",
+      "queueName" : null,
+      "ruleChainId" : null,
+      "singletonMode" : false,
+      "type" : "org.thingsboard.rule.engine.action.TbLogNode"
+    }, {
+      "additionalInfo" : {
+        "layoutX" : 825,
+        "layoutY" : 468
+      },
+      "configuration" : {
+        "timeoutInSeconds" : 60
+      },
+      "configurationVersion" : 0,
+      "createdTime" : 0,
+      "debugMode" : false,
+      "externalId" : null,
+      "id" : {
+        "entityType" : "RULE_NODE",
+        "id" : "8d42d3b0-136f-11f0-a2be-d7621253a08f"
+      },
+      "name" : "RPC Call Request",
+      "queueName" : null,
+      "ruleChainId" : null,
+      "singletonMode" : false,
+      "type" : "org.thingsboard.rule.engine.rpc.TbSendRPCRequestNode"
+    }, {
+      "additionalInfo" : {
+        "description" : "Process incoming messages from devices with the alarm rules defined in the device profile. Dispatch all incoming messages with \"Success\" relation type.",
+        "layoutX" : 204,
+        "layoutY" : 240
+      },
+      "configuration" : {
+        "persistAlarmRulesState" : false,
+        "fetchAlarmRulesStateOnStart" : false
+      },
+      "configurationVersion" : 0,
+      "createdTime" : 0,
+      "debugMode" : false,
+      "externalId" : null,
+      "id" : {
+        "entityType" : "RULE_NODE",
+        "id" : "8d4348e0-136f-11f0-a2be-d7621253a08f"
+      },
+      "name" : "Device Profile Node",
+      "queueName" : null,
+      "ruleChainId" : null,
+      "singletonMode" : false,
+      "type" : "org.thingsboard.rule.engine.profile.TbDeviceProfileNode"
+    }, {
+      "additionalInfo" : {
+        "description" : "",
+        "layoutX" : 264,
+        "layoutY" : 528
+      },
+      "configuration" : {
+        "scriptLang" : "TBEL",
+        "jsScript" : "return msg.temperature > 20;",
+        "tbelScript" : "return msg.api_token === 'YJq4ce2g1yVIQdXygAbC'; "
+      },
+      "configurationVersion" : 0,
+      "createdTime" : 0,
+      "debugMode" : false,
+      "externalId" : null,
+      "id" : {
+        "entityType" : "RULE_NODE",
+        "id" : "8d439700-136f-11f0-a2be-d7621253a08f"
+      },
+      "name" : "filter batvolt",
+      "queueName" : null,
+      "ruleChainId" : null,
+      "singletonMode" : false,
+      "type" : "org.thingsboard.rule.engine.filter.TbJsFilterNode"
+    }, {
+      "additionalInfo" : {
+        "description" : "",
+        "layoutX" : 267,
+        "layoutY" : 687
+      },
+      "configuration" : {
+        "ruleChainId" : "2cd2f990-ca5c-11ee-acfd-2952991d5422",
+        "forwardMsgToDefaultRuleChain" : false
+      },
+      "configurationVersion" : 1,
+      "createdTime" : 0,
+      "debugMode" : false,
+      "externalId" : null,
+      "id" : {
+        "entityType" : "RULE_NODE",
+        "id" : "8d43e520-136f-11f0-a2be-d7621253a08f"
+      },
+      "name" : "filter batvolt",
+      "queueName" : null,
+      "ruleChainId" : null,
+      "singletonMode" : false,
+      "type" : "org.thingsboard.rule.engine.flow.TbRuleChainInputNode"
+    }, {
+      "additionalInfo" : {
+        "description" : "",
+        "layoutX" : 1606,
+        "layoutY" : 351
+      },
+      "configuration" : {
+        "scriptLang" : "TBEL",
+        "jsScript" : "return msg.temperature > 20;",
+        "tbelScript" : "\nvar COLSEVENTEMP02 = msg.COLSEVENTEMP02;\nif(COLSEVENTEMP02 > 60000){\n    var COLSEVENTEMP02 = COLSEVENTEMP02 - 65536;\n}\nCOLSEVENTEMP02 =  COLSEVENTEMP02*0.1;\n\nvar COLSEVENTEMP02_prev = JSON.parse(metadata.COLSEVENTEMP02);\n\nif(COLSEVENTEMP02_prev > 60000){\n    var COLSEVENTEMP02_prev = COLSEVENTEMP02_prev - 65536;\n}\nCOLSEVENTEMP02_prev =  COLSEVENTEMP02_prev*0.1;\n\n\nif(COLSEVENTEMP02 > -15 && COLSEVENTEMP02_prev <= -15){\n    \n    return true;\n}\n\n\n\n\n\nvar COLSEVENTEMP03 = msg.COLSEVENTEMP03;\nif(COLSEVENTEMP03 > 60000){\n    var COLSEVENTEMP03 = COLSEVENTEMP03 - 65536;\n}\nCOLSEVENTEMP03 =  COLSEVENTEMP03*0.1;\n\nvar COLSEVENTEMP03_prev = JSON.parse(metadata.COLSEVENTEMP03);\n\nif(COLSEVENTEMP03_prev > 60000){\n    var COLSEVENTEMP03_prev = COLSEVENTEMP03_prev - 65536;\n}\nCOLSEVENTEMP03_prev =  COLSEVENTEMP03_prev*0.1;\n\n\nif(COLSEVENTEMP03 > -15 && COLSEVENTEMP03_prev <= -15){\n    \n    return true;\n}\n\n\n\n\n\n\nvar COLSEVENTEMP04 = msg.COLSEVENTEMP04;\nif(COLSEVENTEMP04 > 60000){\n    var COLSEVENTEMP04 = COLSEVENTEMP04 - 65536;\n}\nCOLSEVENTEMP04 =  COLSEVENTEMP04*0.1;\n\nvar COLSEVENTEMP04_prev = JSON.parse(metadata.COLSEVENTEMP04);\n\nif(COLSEVENTEMP04_prev > 60000){\n    var COLSEVENTEMP04_prev = COLSEVENTEMP04_prev - 65536;\n}\nCOLSEVENTEMP04_prev =  COLSEVENTEMP04_prev*0.1;\n\n\nif(COLSEVENTEMP04 > -15 && COLSEVENTEMP04_prev <= -15){\n    \n    return true;\n}\n\n\n\n\n\n\nvar COLSEVENTEMP05 = msg.COLSEVENTEMP05;\nif(COLSEVENTEMP05 > 60000){\n    var COLSEVENTEMP05 = COLSEVENTEMP05 - 65536;\n}\nCOLSEVENTEMP05 =  COLSEVENTEMP05*0.1;\n\nvar COLSEVENTEMP05_prev = JSON.parse(metadata.COLSEVENTEMP05);\n\nif(COLSEVENTEMP05_prev > 60000){\n    var COLSEVENTEMP05_prev = COLSEVENTEMP05_prev - 65536;\n}\nCOLSEVENTEMP05_prev =  COLSEVENTEMP05_prev*0.1;\n\n\nif(COLSEVENTEMP05 > -15 && COLSEVENTEMP05_prev <= -15){\n    \n    return true;\n}\n\n\n\n\n\n\nvar COLSEVENTEMP06 = msg.COLSEVENTEMP06;\nif(COLSEVENTEMP06 > 60000){\n    var COLSEVENTEMP06 = COLSEVENTEMP06 - 65536;\n}\nCOLSEVENTEMP06 =  COLSEVENTEMP06*0.1;\n\nvar COLSEVENTEMP06_prev = JSON.parse(metadata.COLSEVENTEMP06);\n\nif(COLSEVENTEMP06_prev > 60000){\n    var COLSEVENTEMP06_prev = COLSEVENTEMP06_prev - 65536;\n}\nCOLSEVENTEMP06_prev =  COLSEVENTEMP06_prev*0.1;\n\n\nif(COLSEVENTEMP06 > -15 && COLSEVENTEMP06_prev <= -15){\n    \n    return true;\n}\n\n\n\n\nreturn false;"
+      },
+      "configurationVersion" : 0,
+      "createdTime" : 0,
+      "debugMode" : true,
+      "externalId" : null,
+      "id" : {
+        "entityType" : "RULE_NODE",
+        "id" : "8d443340-136f-11f0-a2be-d7621253a08f"
+      },
+      "name" : "check_temperature",
+      "queueName" : null,
+      "ruleChainId" : null,
+      "singletonMode" : false,
+      "type" : "org.thingsboard.rule.engine.filter.TbJsFilterNode"
+    }, {
+      "additionalInfo" : {
+        "description" : "",
+        "layoutX" : 1167,
+        "layoutY" : 312
+      },
+      "configuration" : {
+        "numbersToTemplate" : "+94719911235",
+        "smsMessageTemplate" : "Device ${device} has high temperature ",
+        "useSystemSmsSettings" : true,
+        "smsProviderConfiguration" : null
+      },
+      "configurationVersion" : 0,
+      "createdTime" : 0,
+      "debugMode" : false,
+      "externalId" : null,
+      "id" : {
+        "entityType" : "RULE_NODE",
+        "id" : "8d448160-136f-11f0-a2be-d7621253a08f"
+      },
+      "name" : "send_sms",
+      "queueName" : null,
+      "ruleChainId" : null,
+      "singletonMode" : false,
+      "type" : "org.thingsboard.rule.engine.sms.TbSendSmsNode"
+    }, {
+      "additionalInfo" : {
+        "description" : "",
+        "layoutX" : 1661,
+        "layoutY" : 464
+      },
+      "configuration" : {
+        "scriptLang" : "TBEL",
+        "jsScript" : "return {msg: msg, metadata: metadata, msgType: msgType};",
+        "tbelScript" : "\r\nvar COLSEVENTEMP02 = msg.COLSEVENTEMP02;\r\nif(COLSEVENTEMP02 > 60000){\r\n    var COLSEVENTEMP02 = COLSEVENTEMP02 - 65536;\r\n}\r\nCOLSEVENTEMP02 =  COLSEVENTEMP02*0.1;\r\n\r\nvar COLSEVENTEMP03 = msg.COLSEVENTEMP03;\r\nif(COLSEVENTEMP03 > 60000){\r\n    var COLSEVENTEMP03 = COLSEVENTEMP03 - 65536;\r\n}\r\nCOLSEVENTEMP03 =  COLSEVENTEMP03*0.1;\r\n\r\nvar COLSEVENTEMP04 = msg.COLSEVENTEMP04;\r\nif(COLSEVENTEMP04 > 60000){\r\n    var COLSEVENTEMP04 = COLSEVENTEMP04 - 65536;\r\n}\r\nCOLSEVENTEMP04 =  COLSEVENTEMP04*0.1;\r\n\r\nvar COLSEVENTEMP05 = msg.COLSEVENTEMP05;\r\nif(COLSEVENTEMP05 > 60000){\r\n    var COLSEVENTEMP05 = COLSEVENTEMP05 - 65536;\r\n}\r\nCOLSEVENTEMP05 =  COLSEVENTEMP05*0.1;\r\n\r\nvar COLSEVENTEMP06 = msg.COLSEVENTEMP06;\r\nif(COLSEVENTEMP06 > 60000){\r\n    var COLSEVENTEMP06 = COLSEVENTEMP06 - 65536;\r\n}\r\nCOLSEVENTEMP06 =  COLSEVENTEMP06*0.1;\r\n\r\n\r\n\r\nif(COLSEVENTEMP02 > -15){\r\n    metadata.device = \" Cool Room 1\"; \r\n    metadata.temp = COLSEVENTEMP02; \r\n}\r\nif(COLSEVENTEMP03 > -15){\r\n    metadata.device = \" Cool Room 2\";\r\n    metadata.temp = COLSEVENTEMP03; \r\n}\r\nif(COLSEVENTEMP04 > -15){\r\n    metadata.device = \" Cool Room 3\"; \r\n    metadata.temp = COLSEVENTEMP04; \r\n}\r\nif(COLSEVENTEMP05 > -15){\r\n    metadata.device = \" Cool Room 4\"; \r\n    metadata.temp = COLSEVENTEMP05;\r\n}\r\nif(COLSEVENTEMP06 > -15){\r\n    metadata.device = \" New Order Picking\"; \r\n    metadata.temp = COLSEVENTEMP06;\r\n}\r\n\r\nreturn {msg: msg, msgType: msgType, metadata: metadata}; "
+      },
+      "configurationVersion" : 0,
+      "createdTime" : 0,
+      "debugMode" : true,
+      "externalId" : null,
+      "id" : {
+        "entityType" : "RULE_NODE",
+        "id" : "8d44a870-136f-11f0-a2be-d7621253a08f"
+      },
+      "name" : "set data",
+      "queueName" : null,
+      "ruleChainId" : null,
+      "singletonMode" : false,
+      "type" : "org.thingsboard.rule.engine.transform.TbTransformMsgNode"
+    }, {
+      "additionalInfo" : {
+        "description" : "",
+        "layoutX" : 1024,
+        "layoutY" : 749
+      },
+      "configuration" : {
+        "restEndpointUrlPattern" : "https://utech-iiot.lk/enmonqa/public/api/things_services/send_msg_new/${mess}/94761831450,94715447004",
+        "requestMethod" : "GET",
+        "useSimpleClientHttpFactory" : false,
+        "parseToPlainText" : false,
+        "ignoreRequestBody" : false,
+        "enableProxy" : false,
+        "useSystemProxyProperties" : false,
+        "proxyScheme" : null,
+        "proxyHost" : null,
+        "proxyPort" : 0,
+        "proxyUser" : null,
+        "proxyPassword" : null,
+        "readTimeoutMs" : 0,
+        "maxParallelRequestsCount" : 0,
+        "headers" : {
+          "Content-Type" : "application/json"
+        },
+        "useRedisQueueForMsgPersistence" : false,
+        "trimQueue" : null,
+        "maxQueueSize" : null,
+        "credentials" : {
+          "type" : "anonymous"
+        }
+      },
+      "configurationVersion" : 1,
+      "createdTime" : 0,
+      "debugMode" : true,
+      "externalId" : null,
+      "id" : {
+        "entityType" : "RULE_NODE",
+        "id" : "8d451da0-136f-11f0-a2be-d7621253a08f"
+      },
+      "name" : "send sms",
+      "queueName" : null,
+      "ruleChainId" : null,
+      "singletonMode" : false,
+      "type" : "org.thingsboard.rule.engine.rest.TbRestApiCallNode"
+    }, {
+      "additionalInfo" : {
+        "description" : "",
+        "layoutX" : 628,
+        "layoutY" : 543
+      },
+      "configuration" : {
+        "latestTsKeyNames" : [ "data" ],
+        "aggregation" : "NONE",
+        "fetchMode" : "LAST",
+        "orderBy" : "ASC",
+        "limit" : 1000,
+        "useMetadataIntervalPatterns" : false,
+        "startIntervalPattern" : "",
+        "endIntervalPattern" : "",
+        "startInterval" : 4,
+        "startIntervalTimeUnit" : "MINUTES",
+        "endInterval" : 1,
+        "endIntervalTimeUnit" : "SECONDS"
+      },
+      "configurationVersion" : 0,
+      "createdTime" : 0,
+      "debugMode" : true,
+      "externalId" : null,
+      "id" : {
+        "entityType" : "RULE_NODE",
+        "id" : "8d4592d0-136f-11f0-a2be-d7621253a08f"
+      },
+      "name" : "prev value",
+      "queueName" : null,
+      "ruleChainId" : null,
+      "singletonMode" : false,
+      "type" : "org.thingsboard.rule.engine.metadata.TbGetTelemetryNode"
+    }, {
+      "additionalInfo" : {
+        "description" : "",
+        "layoutX" : 761,
+        "layoutY" : 811
+      },
+      "configuration" : {
+        "scriptLang" : "JS",
+        "jsScript" : "\r\nvar app1 = msg.data[\"M13\"];\r\nvar app2 = msg.data[\"M14\"];\r\nvar app3 = msg.data[\"M15\"];\r\n\r\n\r\nvar appT = app1 + app2 + app3;\r\n\r\n\r\nprint(\"M13: \" + app1);\r\nprint(\"M14: \" + app2);\r\nprint(\"M15: \" + app3);\r\nprint(\"Total AppT: \" + appT);\r\n\r\n\r\nreturn appT > 1500;",
+        "tbelScript" : "let json = JSON.parse(msg);\nconsole.log(\"JSON : \", json)\nlet App1 = json.data.M13;\nlet App2 = json.data.M14;\nlet App3 = json.data.M15;\nlet AppT = App1 + App2 + App3;\nif (AppT > 10) {\n    return true;\n}\nelse {\n    return false;\n}\nreturn false;"
+      },
+      "configurationVersion" : 0,
+      "createdTime" : 0,
+      "debugMode" : true,
+      "externalId" : null,
+      "id" : {
+        "entityType" : "RULE_NODE",
+        "id" : "dafcf3a0-1438-11f0-a2be-d7621253a08f"
+      },
+      "name" : "check_kVA",
+      "queueName" : null,
+      "ruleChainId" : null,
+      "singletonMode" : false,
+      "type" : "org.thingsboard.rule.engine.filter.TbJsFilterNode"
+    }, {
+      "additionalInfo" : {
+        "description" : "",
+        "layoutX" : 896,
+        "layoutY" : 921
+      },
+      "configuration" : {
+        "scriptLang" : "JS",
+        "jsScript" : "var app1 = msg.data[\"M13\"];\r\nvar app2 = msg.data[\"M14\"];\r\nvar app3 = msg.data[\"M15\"];\r\nvar app4 = msg.data[\"M43\"];\r\nvar app5 = msg.data[\"M44\"];\r\nvar app6 = msg.data[\"M45\"];\r\nvar hasCrossedThreshold = metadata.hasCrossedThreshold || false;\r\nvar appT = app1 + app2 + app3 + app4 + app5 + app6;\r\nvar mess;\r\n\r\nif (appT > 1500 && !hasCrossedThreshold) {\r\n    mess = \"Apparent Power in Transformer 1 is High. Value is \" + appT;\r\n    metadata.hasCrossedThreshold = true; \r\n} \r\n\r\nelse if (appT <= 1500 && hasCrossedThreshold) {\r\n    metadata.hasCrossedThreshold = false;\r\n}\r\n\r\n// var appT = app1 + app2 + app3 + app4 + app5 + app6;\r\n// var mess;\r\n// if (appT > 1500) {\r\n//     mess = \"Apparrent Power in Transformer 1 is High. value is \" + appT;\r\n// }\r\nmetadata.mess = mess;\r\nmetadata.appT = appT;\r\n\r\nreturn {\r\n    msg: msg,\r\n    metadata: metadata,\r\n    msgType: msgType\r\n};",
+        "tbelScript" : "var app1 = msg.data[\"M13\"];\r\nvar app2 = msg.data[\"M14\"];\r\nvar app3 = msg.data[\"M15\"];\r\n\r\n\r\nvar appT = app1 + app2 + app3;\r\nlet mess;\r\nif (appT > 100) {\r\n    mess = \"High\";\r\n}\r\nreturn {msg: msg, msgType: msgType, metadata: metadata, mess: mess, appT: appT}; "
+      },
+      "configurationVersion" : 0,
+      "createdTime" : 0,
+      "debugMode" : true,
+      "externalId" : null,
+      "id" : {
+        "entityType" : "RULE_NODE",
+        "id" : "8b4ddc40-1445-11f0-a2be-d7621253a08f"
+      },
+      "name" : "set data",
+      "queueName" : null,
+      "ruleChainId" : null,
+      "singletonMode" : false,
+      "type" : "org.thingsboard.rule.engine.transform.TbTransformMsgNode"
+    } ],
+    "ruleChainConnections" : null
+  },
+  "relations" : [ ],
+  "attributes" : {
+    "SERVER_SCOPE" : [ ]
+  }
+}
