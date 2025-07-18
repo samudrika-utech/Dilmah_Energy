@@ -1,0 +1,130 @@
+{
+  "entityType" : "DASHBOARD",
+  "entity" : {
+    "assignedCustomers" : [ {
+      "customerId" : {
+        "entityType" : "CUSTOMER",
+        "id" : "8de1ef50-a591-11ef-88cf-f38f8717d037"
+      },
+      "title" : "Dilmah User 01",
+      "public" : false
+    } ],
+    "configuration" : {
+      "description" : "",
+      "widgets" : {
+        "2164ce7d-2a0f-12eb-4ead-dd8fae346029" : {
+          "type" : "static",
+          "sizeX" : 7.5,
+          "sizeY" : 3,
+          "config" : {
+            "datasources" : [ ],
+            "timewindow" : {
+              "realtime" : {
+                "timewindowMs" : 60000
+              }
+            },
+            "showTitle" : false,
+            "backgroundColor" : "#202020",
+            "color" : "rgba(0, 0, 0, 0.87)",
+            "padding" : "8px",
+            "settings" : {
+              "cardHtml" : "<h1>Budget Dashboard</h1>\r\n    <div class=\"controls\">\r\n\r\n        <label for=\"parameters\" class=\"parameters-label\">Parameters:</label>\r\n        <select id=\"parameters\">\r\n            <option value=\"01\">Main Menu</option>\r\n        </select>\r\n\r\n        <label for=\"fromDate\">From:</label>\r\n        <input type=\"date\" id=\"fromDate\">\r\n        <label for=\"toDate\">To:</label>\r\n        <input type=\"date\" id=\"toDate\">\r\n        <label for=\"groupBy\">Group By:</label>\r\n        <select id=\"groupBy\">\r\n            <option value=\"day\">Day</option>\r\n            <option value=\"month\">Month</option>\r\n        </select>\r\n        <button onclick=\"updateDashboard()\">Update</button>\r\n    </div>\r\n    <table>\r\n        <thead>\r\n            <tr>\r\n                <th>Date</th>\r\n                <th>Day</th>\r\n                <th>Peak</th>\r\n                <th>Off Peak</th>\r\n                <th>Day Rate</th>\r\n                <th>Peak Rate</th>\r\n                <th>Off Peak Rate</th>\r\n                <th>Total Rate</th>\r\n            </tr>\r\n        </thead>\r\n        <tbody id=\"budgetTable\"></tbody>\r\n    </table>\r\n\r\n    <script>\r\n        const dayRatePerUnit = 20.50;\r\n        const peakRatePerUnit = 30.5;\r\n        const offPeakRatePerUnit = 18.50;\r\n\r\n        async function getJwtToken() {\r\n            const loginUrl = 'https://energy-app.utech-iiot.lk/api/auth/login';\r\n            const credentials = { username: 'dilmah@gmail.com', password: 'Dilmah@2024' };\r\n            try {\r\n                const response = await fetch(loginUrl, {\r\n                    method: 'POST',\r\n                    headers: { 'Content-Type': 'application/json' },\r\n                    body: JSON.stringify(credentials)\r\n                });\r\n                const data = await response.json();\r\n                return data.token;\r\n            } catch (error) {\r\n                console.error('Login error:', error);\r\n            }\r\n        }\r\n\r\n        async function fetchTelemetryData(token, fromDate, toDate, apKey) {\r\n            const apiUrl = `https://energy-app.utech-iiot.lk/api/plugins/telemetry/DEVICE/${apKey}/values/timeseries?keys=data&startTs=${new Date(fromDate).getTime()}&endTs=${new Date(toDate).getTime()}&limit=400000`;\r\n            try {\r\n                const response = await fetch(apiUrl, {\r\n                    method: 'GET',\r\n                    headers: { 'Authorization': `Bearer ${token}` }\r\n                });\r\n                return await response.json();\r\n            } catch (error) {\r\n                console.error('Error fetching telemetry data:', error);\r\n            }\r\n        }\r\n\r\n        function processTelemetryData(apiData, groupBy = 'day') {\r\n            const dataByGroup = {};\r\n\r\n            const para = document.getElementById('parameters').value;\r\n            console.log('Parameter is :', para);\r\n            apiData.data.forEach((dataPoint) => {\r\n                const dateObj = new Date(dataPoint.ts);\r\n\r\n                \r\n                const groupKey =\r\n                    groupBy === 'day'\r\n                        ? dateObj.toISOString().split('T')[0] \r\n                        : `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`; \r\n\r\n                \r\n                const json_form = JSON.parse(dataPoint.value);\r\n\r\n                \r\n                if (!dataByGroup[groupKey]) {\r\n                    dataByGroup[groupKey] = {\r\n                        day: { min: null, max: null, total: 0 },\r\n                        peak: { min: null, max: null, total: 0 },\r\n                        offPeak: { min: null, max: null, total: 0 }\r\n                    };\r\n                }\r\n\r\n                \r\n                let M22 = 0;\r\n                \r\n                if (para === \"01\") {\r\n                    M22 = json_form.M22 || 0;\r\n                }\r\n                // } else if (para === \"02\") {\r\n                //     M21 = json_form.M51 || 0;\r\n                //     M22 = json_form.M52 || 0;\r\n                //     M23 = json_form.M53 || 0;\r\n                // } else if (para === \"03\") {\r\n                //     M21 = json_form.M21 || 0;\r\n                //     M22 = json_form.M22 || 0;\r\n                //     M23 = json_form.M23 || 0;\r\n                // } else if (para === \"04\") {\r\n                //     M21 = json_form.M51 || 0;\r\n                //     M22 = json_form.M52 || 0;\r\n                //     M23 = json_form.M53 || 0;\r\n                // } else if (para === \"05\") {\r\n                //     M21 = json_form.M21 || 0;\r\n                //     M22 = json_form.M22 || 0;\r\n                //     M23 = json_form.M23 || 0;\r\n                // }\r\n                \r\n                const totalUnits = M22;\r\n                \r\n                const hour = dateObj.getHours();\r\n\r\n                \r\n                const trackMinMax = (timeBand, groupKey) => {\r\n                    if (dataByGroup[groupKey][timeBand].min === null || totalUnits < dataByGroup[groupKey][timeBand].min) {\r\n                        dataByGroup[groupKey][timeBand].min = totalUnits;\r\n                    }\r\n                    if (dataByGroup[groupKey][timeBand].max === null || totalUnits > dataByGroup[groupKey][timeBand].max) {\r\n                        dataByGroup[groupKey][timeBand].max = totalUnits;\r\n                    }\r\n                };\r\n\r\n                \r\n                if (hour >= 5 && hour < 18) {\r\n                    trackMinMax('day', groupKey);\r\n                } else if (hour >= 18 && hour < 22) {\r\n                    trackMinMax('peak', groupKey);\r\n                } else {\r\n                    trackMinMax('offPeak', groupKey);\r\n                }\r\n            });\r\n\r\n            \r\n            for (const groupKey in dataByGroup) {\r\n                const groupData = dataByGroup[groupKey];\r\n\r\n                ['day', 'peak', 'offPeak'].forEach((band) => {\r\n                    const { min, max } = groupData[band];\r\n                    if (min !== null && max !== null) {\r\n                        const total = max - min;\r\n                        groupData[band].total = total > 0 ? total : 0;\r\n                    }\r\n                });\r\n            }\r\n\r\n            \r\n            if (groupBy === 'month') {\r\n                const monthlyData = {};\r\n\r\n                for (const dayKey in dataByGroup) {\r\n                    const monthKey = dayKey.slice(0, 7); \r\n\r\n                    if (!monthlyData[monthKey]) {\r\n                        monthlyData[monthKey] = {\r\n                            day: { total: 0 },\r\n                            peak: { total: 0 },\r\n                            offPeak: { total: 0 }\r\n                        };\r\n                    }\r\n\r\n                    \r\n                    ['day', 'peak', 'offPeak'].forEach((band) => {\r\n                        monthlyData[monthKey][band].total += dataByGroup[dayKey][band].total;\r\n                    });\r\n                }\r\n\r\n                return monthlyData;\r\n            }\r\n\r\n            \r\n            return dataByGroup;\r\n        }\r\n\r\n\r\n        function updateTable(dataByDate) {\r\n            const tableBody = document.getElementById('budgetTable');\r\n            tableBody.innerHTML = '';\r\n\r\n            Object.entries(dataByDate).forEach(([key, units]) => {\r\n                const dayRate = units.day.total * dayRatePerUnit;\r\n                const peakRate = units.peak.total * peakRatePerUnit;\r\n                const offPeakRate = units.offPeak.total * offPeakRatePerUnit;\r\n                const totalRate = dayRate + peakRate + offPeakRate;\r\n\r\n                const row = document.createElement('tr');\r\n                row.innerHTML = `\r\n                    <td>${key}</td>\r\n                    <td>${units.day.total.toFixed(2)} Units</td>\r\n                    <td>${units.peak.total.toFixed(2)} Units</td>\r\n                    <td>${units.offPeak.total.toFixed(2)} Units</td>\r\n                    <td>Rs ${dayRate.toFixed(2)}</td>\r\n                    <td>Rs ${peakRate.toFixed(2)}</td>\r\n                    <td>Rs ${offPeakRate.toFixed(2)}</td>\r\n                    <td>Rs ${totalRate.toFixed(2)}</td>\r\n                `;\r\n                tableBody.appendChild(row);\r\n            });\r\n        }\r\n        \r\n                const urlParams = new URLSearchParams(window.location.search);\r\n                const assetValue = urlParams.get('asset');\r\n            \r\n                \r\n                if (assetValue) {\r\n                    const dropdown = document.getElementById('asset');\r\n                    dropdown.value = assetValue;\r\n                }\r\n\r\n        async function updateDashboard() {\r\n            const fromDate = document.getElementById('fromDate').value;\r\n            const toDate = document.getElementById('toDate').value;\r\n            const groupBy = document.getElementById('groupBy').value;\r\n            const parameter = document.getElementById('parameters').value;\r\n            let apKey = null;\r\n\r\n            switch (parameter) {\r\n                case \"01\":\r\n                    apKey = \"3d911780-a58f-11ef-88cf-f38f8717d037\";\r\n                    break;\r\n                // case \"03\":\r\n                // case \"04\":\r\n                //     apKey = \"c1c30fa0-a58e-11ef-88cf-f38f8717d037\";\r\n                //     break;\r\n                // case \"05\":\r\n                //     apKey = \"cf6645a0-a58e-11ef-88cf-f38f8717d037\";\r\n                //     break;\r\n                default:\r\n                    console.error(\"Invalid parameter\");\r\n            }\r\n\r\n            if (!fromDate || !toDate) {\r\n                alert('Please select both from and to dates.');\r\n                return;\r\n            }\r\n\r\n            const token = await getJwtToken();\r\n            const apiData = await fetchTelemetryData(token, fromDate, toDate, apKey);\r\n            console.log('API TELEMETRY IS :',apiData);\r\n            if (!apiData) {\r\n                alert('Failed to fetch data.');\r\n                return;\r\n            }\r\n\r\n            const processedData = processTelemetryData(apiData, groupBy);\r\n            updateTable(processedData);\r\n        }\r\n    </script>",
+              "cardCss" : "        body {\r\n            font-family: Arial, sans-serif;\r\n            background-color: #202020;\r\n            color: #9fc5e8;\r\n            margin: 0;\r\n            padding: 0;\r\n        }\r\n        table {\r\n            width: 100%;\r\n            border-collapse: collapse;\r\n            margin: 20px 0;\r\n            font-size: 16px;\r\n            text-align: left;\r\n        }\r\n        th, td {\r\n            padding: 12px;\r\n            border-bottom: 1px solid #444;\r\n            text-align: center;\r\n        }\r\n        th {\r\n            background-color: #9fc5e8;\r\n            color: black;\r\n        }\r\n        td {\r\n            background-color: #3d85c6;\r\n        }\r\n        h1 {\r\n            text-align: center;\r\n            color: #9fc5e8;\r\n        }\r\n        .controls {\r\n            text-align: center;\r\n            margin: 20px;\r\n        }\r\n        .controls select {\r\n            padding: 8px;\r\n            font-size: 14px;\r\n            margin-right: 15px; \r\n        }\r\n        .controls .parameters-label {\r\n            margin-right: 10px;\r\n            margin-left: 20px; \r\n        }\r\n        .controls label {\r\n            margin-right: 10px;\r\n            font-size: 16px;\r\n            color: #9fc5e8;\r\n        }\r\n        .controls input, .controls select {\r\n            padding: 8px;\r\n            font-size: 14px;\r\n        }\r\n        button {\r\n            padding: 10px 20px;\r\n            font-size: 16px;\r\n            background-color: #9fc5e8;\r\n            border: none;\r\n            color: #202020;\r\n            cursor: pointer;\r\n        }\r\n        button:hover {\r\n            background-color: #3d85c6;\r\n        }"
+            },
+            "title" : "New HTML Card",
+            "dropShadow" : true,
+            "enableFullscreen" : true,
+            "widgetStyle" : { },
+            "widgetCss" : "",
+            "pageSize" : 1024,
+            "noDataDisplayMessage" : ""
+          },
+          "row" : 0,
+          "col" : 0,
+          "id" : "2164ce7d-2a0f-12eb-4ead-dd8fae346029",
+          "typeFullFqn" : "system.cards.html_card"
+        }
+      },
+      "states" : {
+        "default" : {
+          "name" : "Dilmah Warehouse 02 Floor G",
+          "root" : true,
+          "layouts" : {
+            "main" : {
+              "widgets" : {
+                "2164ce7d-2a0f-12eb-4ead-dd8fae346029" : {
+                  "sizeX" : 28,
+                  "sizeY" : 16,
+                  "row" : 0,
+                  "col" : 0
+                }
+              },
+              "gridSettings" : {
+                "backgroundColor" : "#eeeeee",
+                "columns" : 24,
+                "margin" : 10,
+                "outerMargin" : true,
+                "backgroundSizeMode" : "100%"
+              }
+            }
+          }
+        }
+      },
+      "entityAliases" : { },
+      "filters" : { },
+      "timewindow" : {
+        "displayValue" : "",
+        "hideInterval" : false,
+        "hideLastInterval" : false,
+        "hideQuickInterval" : false,
+        "hideAggregation" : false,
+        "hideAggInterval" : false,
+        "hideTimezone" : false,
+        "selectedTab" : 0,
+        "realtime" : {
+          "realtimeType" : 0,
+          "interval" : 1000,
+          "timewindowMs" : 60000,
+          "quickInterval" : "CURRENT_DAY"
+        },
+        "history" : {
+          "historyType" : 0,
+          "interval" : 1000,
+          "timewindowMs" : 60000,
+          "fixedTimewindow" : {
+            "startTimeMs" : 1729398386393,
+            "endTimeMs" : 1729484786393
+          },
+          "quickInterval" : "CURRENT_DAY"
+        },
+        "aggregation" : {
+          "type" : "AVG",
+          "limit" : 25000
+        }
+      },
+      "settings" : {
+        "stateControllerId" : "entity",
+        "showTitle" : false,
+        "showDashboardsSelect" : true,
+        "showEntitiesSelect" : true,
+        "showDashboardTimewindow" : true,
+        "showDashboardExport" : true,
+        "toolbarAlwaysOpen" : true
+      }
+    },
+    "externalId" : null,
+    "id" : {
+      "entityType" : "DASHBOARD",
+      "id" : "d821ede0-fa73-11ef-88cf-f38f8717d037"
+    },
+    "image" : null,
+    "mobileHide" : false,
+    "mobileOrder" : null,
+    "name" : "Dilmah Warehouse 02 Floor G",
+    "title" : "Dilmah Warehouse 02 Floor G"
+  },
+  "relations" : [ ],
+  "attributes" : {
+    "SERVER_SCOPE" : [ ]
+  }
+}

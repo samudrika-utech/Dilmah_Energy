@@ -1,0 +1,124 @@
+{
+  "entityType" : "DASHBOARD",
+  "entity" : {
+    "assignedCustomers" : [ {
+      "customerId" : {
+        "entityType" : "CUSTOMER",
+        "id" : "8de1ef50-a591-11ef-88cf-f38f8717d037"
+      },
+      "title" : "Dilmah User 01",
+      "public" : false
+    } ],
+    "configuration" : {
+      "description" : "",
+      "widgets" : {
+        "2164ce7d-2a0f-12eb-4ead-dd8fae346029" : {
+          "type" : "static",
+          "sizeX" : 7.5,
+          "sizeY" : 3,
+          "config" : {
+            "datasources" : [ ],
+            "timewindow" : {
+              "realtime" : {
+                "timewindowMs" : 60000
+              }
+            },
+            "showTitle" : false,
+            "backgroundColor" : "rgb(0, 0, 0)",
+            "color" : "rgba(249, 244, 244, 0.87)",
+            "padding" : "8px",
+            "settings" : {
+              "cardHtml" : "<h1>Budget Dashboard</h1>\r\n<div>\r\n    <label for=\"fromDate\">From:</label>\r\n    <input type=\"date\" id=\"fromDate\" />\r\n\r\n    <label for=\"toDate\">To:</label>\r\n    <input type=\"date\" id=\"toDate\" />\r\n\r\n    <label for=\"groupBy\">Group By:</label>\r\n    <select id=\"groupBy\">\r\n        <option value=\"day\">Day</option>\r\n        <option value=\"week\">Week</option>\r\n        <option value=\"month\">Month</option>\r\n    </select>\r\n\r\n    <button onclick=\"updateDashboard()\">Update Dashboard</button>\r\n</div>\r\n    <table>\r\n        <thead>\r\n            <tr>\r\n                <th>Date</th>\r\n                <th>Day</th>\r\n                <th>Peak</th>\r\n                <th>Off Peak</th>\r\n                <th>Day Rate</th>\r\n                <th>Peak Rate</th>\r\n                <th>Off Peak Rate</th>\r\n                <th>Total Rate</th>\r\n            </tr>\r\n        </thead>\r\n        <tbody id=\"budgetTable\"></tbody>\r\n    </table>\r\n\r\n    <script>\r\n        const dayRatePerUnit = 20.50;\r\n        const peakRatePerUnit = 30.5;\r\n        const offPeakRatePerUnit = 18.50;\r\n\r\n        async function getJwtToken() {\r\n            const loginUrl = 'https://energy-app.utech-iiot.lk/api/auth/login';\r\n            const credentials = { username: 'dilmah@gmail.com', password: 'Dilmah@2024' };\r\n            try {\r\n                const response = await fetch(loginUrl, {\r\n                    method: 'POST',\r\n                    headers: { 'Content-Type': 'application/json' },\r\n                    body: JSON.stringify(credentials)\r\n                });\r\n                const data = await response.json();\r\n                return data.token;\r\n            } catch (error) {\r\n                console.error('Login error:', error);\r\n            }\r\n        }\r\n\r\n        async function fetchTelemetryData(token, fromDate, toDate) {\r\n            const apiUrl = `https://energy-app.utech-iiot.lk/api/plugins/telemetry/DEVICE/cf6645a0-a58e-11ef-88cf-f38f8717d037/values/timeseries?keys=data&startTs=${new Date(fromDate).getTime()}&endTs=${new Date(toDate).getTime()}&interval=0&limit=100000&agg=AVG&useStrictDataTypes=false`;\r\n            try {\r\n                const response = await fetch(apiUrl, {\r\n                    method: 'GET',\r\n                    headers: { 'Authorization': `Bearer ${token}` }\r\n                });\r\n                return response.json();\r\n            } catch (error) {\r\n                console.error('Error fetching telemetry data:', error);\r\n            }\r\n        }\r\n\r\n        function processTelemetryData(apiData, groupBy) {\r\n            const dataByGroup = {};\r\n    \r\n            apiData.data.forEach((dataPoint) => {\r\n                const date = new Date(dataPoint.ts);\r\n                const json_form = JSON.parse(dataPoint.value);\r\n                const totalUnits = json_form.M21;\r\n    \r\n                let groupKey;\r\n                if (groupBy === 'day') {\r\n                    groupKey = date.toISOString().split('T')[0];\r\n                } else if (groupBy === 'week') {\r\n                    const week = Math.ceil(date.getDate() / 7);\r\n                    groupKey = `${date.getFullYear()}-W${week}`;\r\n                } else if (groupBy === 'month') {\r\n                    groupKey = `${date.getFullYear()}-${date.getMonth() + 1}`;\r\n                }\r\n    \r\n                if (!dataByGroup[groupKey]) {\r\n                    dataByGroup[groupKey] = {\r\n                        day: { total: 0 },\r\n                        peak: { total: 0 },\r\n                        offPeak: { total: 0 }\r\n                    };\r\n                }\r\n    \r\n                const hour = date.getHours();\r\n                if (hour >= 5 && hour < 18) {\r\n                    dataByGroup[groupKey].day.total += totalUnits;\r\n                } else if (hour >= 18 && hour < 22) {\r\n                    dataByGroup[groupKey].peak.total += totalUnits;\r\n                } else {\r\n                    dataByGroup[groupKey].offPeak.total += totalUnits;\r\n                }\r\n            });\r\n    \r\n            return dataByGroup;\r\n    }\r\n\r\n        function updateTable(dataByGroup) {\r\n            const tableBody = document.getElementById('budgetTable');\r\n            tableBody.innerHTML = '';\r\n    \r\n            Object.entries(dataByGroup).forEach(([group, units]) => {\r\n                const dayRate = units.day.total * dayRatePerUnit;\r\n                const peakRate = units.peak.total * peakRatePerUnit;\r\n                const offPeakRate = units.offPeak.total * offPeakRatePerUnit;\r\n                const totalRate = dayRate + peakRate + offPeakRate;\r\n    \r\n                const row = document.createElement('tr');\r\n                row.innerHTML = `\r\n                    <td>${group}</td>\r\n                    <td>${units.day.total.toFixed(2)} Units</td>\r\n                    <td>${units.peak.total.toFixed(2)} Units</td>\r\n                    <td>${units.offPeak.total.toFixed(2)} Units</td>\r\n                    <td>Rs ${dayRate.toFixed(2)}</td>\r\n                    <td>Rs ${peakRate.toFixed(2)}</td>\r\n                    <td>Rs ${offPeakRate.toFixed(2)}</td>\r\n                    <td>Rs ${totalRate.toFixed(2)}</td>\r\n                `;\r\n                tableBody.appendChild(row);\r\n            });\r\n    }\r\n\r\n       async function updateDashboard() {\r\n            const fromDateInput = document.getElementById('fromDate').value;\r\n            const toDateInput = document.getElementById('toDate').value;\r\n            const groupBy = document.getElementById('groupBy').value;\r\n    \r\n            const fromDate = new Date(fromDateInput).getTime();\r\n            const toDate = new Date(toDateInput).getTime();\r\n    \r\n            const token = await getJwtToken();\r\n            const apiData = await fetchTelemetryData(token, fromDate, toDate);\r\n            const processedData = processTelemetryData(apiData, groupBy);\r\n            updateTable(processedData);\r\n    }\r\n\r\n        updateDashboard();\r\n    </script>",
+              "cardCss" : "body {\r\n            font-family: Arial, sans-serif;\r\n            background-color: #202020;\r\n            color: #f3f6f4;\r\n            margin: 0;\r\n            padding: 0;\r\n        }\r\n        table {\r\n            width: 100%;\r\n            border-collapse: collapse;\r\n            margin: 20px 0;\r\n            font-size: 16px;\r\n            text-align: left;\r\n        }\r\n        th, td {\r\n            padding: 12px;\r\n            border-bottom: 1px solid #444;\r\n            text-align: center;\r\n        }\r\n        th {\r\n            background-color: #9fc5e8;\r\n        }\r\n        td {\r\n            background-color: #3d85c6;\r\n        }\r\n        h1 {\r\n            text-align: center;\r\n        }"
+            },
+            "title" : "New HTML Card",
+            "dropShadow" : true,
+            "enableFullscreen" : true,
+            "widgetStyle" : { },
+            "widgetCss" : "",
+            "pageSize" : 1024,
+            "noDataDisplayMessage" : ""
+          },
+          "row" : 0,
+          "col" : 0,
+          "id" : "2164ce7d-2a0f-12eb-4ead-dd8fae346029",
+          "typeFullFqn" : "system.cards.html_card"
+        }
+      },
+      "states" : {
+        "default" : {
+          "name" : "DILMAH WAREHOUSE 06 FLOOR G",
+          "root" : true,
+          "layouts" : {
+            "main" : {
+              "widgets" : {
+                "2164ce7d-2a0f-12eb-4ead-dd8fae346029" : {
+                  "sizeX" : 27,
+                  "sizeY" : 12,
+                  "row" : 0,
+                  "col" : 0
+                }
+              },
+              "gridSettings" : {
+                "backgroundColor" : "#eeeeee",
+                "columns" : 24,
+                "margin" : 10,
+                "outerMargin" : true,
+                "backgroundSizeMode" : "100%"
+              }
+            }
+          }
+        }
+      },
+      "entityAliases" : { },
+      "filters" : { },
+      "timewindow" : {
+        "hideInterval" : false,
+        "hideLastInterval" : false,
+        "hideQuickInterval" : false,
+        "hideAggregation" : false,
+        "hideAggInterval" : false,
+        "hideTimezone" : false,
+        "selectedTab" : 1,
+        "history" : {
+          "historyType" : 1,
+          "timewindowMs" : 60000,
+          "interval" : 3600000,
+          "fixedTimewindow" : {
+            "startTimeMs" : 1727756760000,
+            "endTimeMs" : 1729484786393
+          },
+          "quickInterval" : "CURRENT_DAY"
+        },
+        "aggregation" : {
+          "type" : "AVG",
+          "limit" : 25000
+        },
+        "timezone" : null
+      },
+      "settings" : {
+        "stateControllerId" : "entity",
+        "showTitle" : false,
+        "showDashboardsSelect" : true,
+        "showEntitiesSelect" : true,
+        "showDashboardTimewindow" : true,
+        "showDashboardExport" : true,
+        "toolbarAlwaysOpen" : true
+      }
+    },
+    "externalId" : null,
+    "id" : {
+      "entityType" : "DASHBOARD",
+      "id" : "1162d840-cbe3-11ef-88cf-f38f8717d037"
+    },
+    "image" : null,
+    "mobileHide" : false,
+    "mobileOrder" : null,
+    "name" : "DILMAH WAREHOUSE 06 FLOOR G",
+    "title" : "DILMAH WAREHOUSE 06 FLOOR G"
+  },
+  "relations" : [ ],
+  "attributes" : {
+    "SERVER_SCOPE" : [ ]
+  }
+}
